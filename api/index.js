@@ -13,23 +13,20 @@ export default async function handler(req, res) {
       return res.json({ status: false, message: "Enter number" });
     }
 
-    const r = await fetch(`https://num-api-yie6.vercel.app/?number=${term}`);
+    // 🔥 ORIGINAL WORKING API
+    const r = await fetch(`https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`);
     let data = await r.json();
 
-    // 🔥 REMOVE TAG COMPLETELY
+    // 🔥 ONLY REMOVE TAG
     delete data.tag;
-
-    // (extra safety – agar andar ho)
-    if (data.result && data.result.tag) {
-      delete data.result.tag;
-    }
 
     return res.json(data);
 
   } catch (e) {
     return res.json({
       status: false,
-      message: "API Down"
+      message: "API Down",
+      error: String(e)
     });
   }
 }
