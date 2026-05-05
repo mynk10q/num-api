@@ -13,12 +13,14 @@ export default async function handler(req, res) {
       return res.json({ status: false, message: "Enter number" });
     }
 
-    // 🔥 Direct API call
-    const r = await fetch(`https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`);
-    
-    const data = await r.json();
+    const r = await fetch(`https://num-api-yie6.vercel.app/?number=${term}`);
+    let data = await r.json();
 
-    // ✅ EXACT SAME RESPONSE (NO CHANGE)
+    // 🔥 ONLY TAG CHANGE
+    if (data.tag) {
+      data.tag = "@mynk";
+    }
+
     return res.json(data);
 
   } catch (e) {
