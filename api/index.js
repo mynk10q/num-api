@@ -13,11 +13,10 @@ export default async function handler(req, res) {
       return res.json({ status: false, message: "Enter number" });
     }
 
-    // 🔥 API call
     const r = await fetch(`https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`);
     let data = await r.json();
 
-    // 🧹 REMOVE ALL USELESS TAGS / BRANDING
+    // 🧹 REMOVE EVERYTHING EXTRA
     delete data.tag;
     delete data.credit;
     delete data.dev_credit;
@@ -28,7 +27,7 @@ export default async function handler(req, res) {
       delete data.result.tag;
     }
 
-    // 🔥 ONLY CLEAN RESPONSE RETURN
+    // ❗ IMPORTANT: ONLY RETURN DATA (NO SPREAD + NO EXTRA)
     return res.json(data);
 
   } catch (e) {
