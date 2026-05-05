@@ -13,7 +13,7 @@ export default async function handler(req, res) {
 
     const { term, key } = req.query;
 
-    // 🔐 Front key (tumhari)
+    // 🔐 Front key
     if (key !== "mynk") {
       return res.status(403).json({
         status: false,
@@ -28,29 +28,26 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔥 Hidden original API key
-    const REAL_KEY = "MAYAN-BHAI";
-
-    // 🔥 Original API call
-    const url = `https://www.zephrexdigital.site/api?key=${REAL_KEY}&type=PHONE&term=${term}`;
+    // 🔥 Tumhari new API
+    const url = `https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`;
 
     const r = await fetch(url);
-    const data = await r.json();
+    let data = await r.json();
 
-    // 🔥 Clean & modify response
-    if (data.dev_credit) delete data.dev_credit;
-    if (data.credit) delete data.credit;
+    // ✅ REMOVE unwanted fields
+    delete data.tag;
+    delete data.dev_credit;
+    delete data.credit;
 
-    // 🔥 Replace branding
-    if (data.BUY_API) data.BUY_API = "@mynk_mynk_mynk";
-    if (data.SUPPORT) data.SUPPORT = "@mynk_mynk_mynk";
+    // 🔥 Agar andar nested me ho (extra safety)
+    if (data.result) {
+      delete data.result.tag;
+    }
 
+    // 🔥 Final clean response
     return res.status(200).json({
       ...data,
-      BUY_API: "@mynk_mynk_mynk",
-      SUPPORT: "@mynk_mynk_mynk",
-      dev_credit: "@mynk_mynk_mynk",
-      credit: "@mynk_mynk_mynk"
+      status: true
     });
 
   } catch (e) {
