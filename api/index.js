@@ -16,9 +16,12 @@ export default async function handler(req, res) {
     const r = await fetch(`https://num-api-yie6.vercel.app/?number=${term}`);
     let data = await r.json();
 
-    // 🔥 ONLY TAG CHANGE
-    if (data.tag) {
-      data.tag = "@mynk";
+    // 🔥 REMOVE TAG COMPLETELY
+    delete data.tag;
+
+    // (extra safety – agar andar ho)
+    if (data.result && data.result.tag) {
+      delete data.result.tag;
     }
 
     return res.json(data);
