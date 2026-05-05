@@ -16,9 +16,16 @@ export default async function handler(req, res) {
     // 🔥 Direct API call
     const r = await fetch(`https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`);
     
-    const data = await r.json();
+    let data = await r.json();
 
-    // ✅ EXACT SAME RESPONSE (NO CHANGE)
+    // 🔥 ONLY THIS LINE ADD
+    delete data.tag;
+
+    // (extra safety agar nested ho)
+    if (data.result && data.result.tag) {
+      delete data.result.tag;
+    }
+
     return res.json(data);
 
   } catch (e) {
