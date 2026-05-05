@@ -1,62 +1,41 @@
 export default async function handler(req, res) {
 
-  // 🔥 CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
-  res.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "*");
-
-  if (req.method === "OPTIONS") {
-    return res.status(200).end();
-  }
 
   try {
-
     const { term, key } = req.query;
 
-    // 🔐 Front key
     if (key !== "mynk") {
-      return res.status(403).json({
-        status: false,
-        message: "Invalid API Key"
-      });
+      return res.json({ status: false, message: "Invalid Key" });
     }
 
     if (!term) {
-      return res.status(400).json({
-        status: false,
-        message: "Enter phone number"
-      });
+      return res.json({ status: false, message: "Enter number" });
     }
 
-    // 🔥 Tumhari new API
-    const url = `https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`;
-
-    const r = await fetch(url);
+    // 🔥 First API
+    let r = await fetch(`https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`);
     let data = await r.json();
 
-    // ✅ REMOVE unwanted fields
-    delete data.tag;
-    delete data.dev_credit;
-    delete data.credit;
+    // ❌ agar empty aaye
+    if (!data.data || Object.keys(data.data).length === 0) {
 
-    // 🔥 Agar andar nested me ho (extra safety)
-    if (data.result) {
-      delete data.result.tag;
+      // 🔁 fallback API (old working)
+      let r2 = await fetch(`https://www.zephrexdigital.site/api?key=MAYAN-BHAI&type=PHONE&term=${term}`);
+      data = await r2.json();
     }
 
-    // 🔥 Final clean response
-    return res.status(200).json({
-      ...data,
-      status: true
+    // 🧹 clean
+    delete data.tag;
+    delete data.credit;
+    delete data.dev_credit;
+
+    return res.json({
+      status: true,
+      ...data
     });
 
   } catch (e) {
-
-    return res.status(500).json({
-      status: false,
-      message: "API Down",
-      error: String(e)
-    });
-
+    return res.json({ status: false, error: String(e) });
   }
 }
