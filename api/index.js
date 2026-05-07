@@ -6,7 +6,7 @@ export default async function handler(req, res) {
 
     const { term, key } = req.query;
 
-    if (key !== "mynk") {
+    if (key !== "lodalasan") {
       return res.json({
         success: false,
         message: "Invalid Key"
