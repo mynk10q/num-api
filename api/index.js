@@ -20,36 +20,33 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔥 NEW API CALL
+    // 🔥 API CALL
     const r = await fetch(
       `https://num-tg-info-api.vercel.app/info?number=${term}`
     );
 
     const data = await r.json();
 
-    // 🔥 RESULT ARRAY FIX
-    const results = Array.isArray(data.result)
-      ? data.result
-      : data.data || [data];
+    // 🔥 ORIGINAL RESULTS
+    const results = data.results || [];
 
-    // 🔥 KEY MAPPING
+    // 🔥 FORMAT FIX
     const formatted = results.map((item) => ({
-      id: item.id || null,
-      mobile: item.mobile || item.MOBILE || "",
-      name: item.name || item.NAME || "",
-      father_name: item.father_name || item.fname || "",
-      address: item.address || item.ADDRESS || "",
-      alt_mobile: item.alt_mobile || item.alt || "",
+      id: item.id || "",
+      mobile: item.mobile || "",
+      name: item.name || "",
+      father_name: item.fname || "",
+      address: item.address || "",
+      alt_mobile: item.alt || "",
       circle: item.circle || "",
-      id_number: item.id_number || item.id || "",
+      id_number: item.id || "",
       email: item.email || ""
     }));
 
-    // 🔥 FINAL RESPONSE
+    // 🔥 FINAL RESPONSE (NO CREDIT)
     return res.json({
       success: true,
-      result: formatted,
-      credit: "@mynk_mynk_mynk"
+      result: formatted
     });
 
   } catch (e) {
@@ -57,8 +54,7 @@ export default async function handler(req, res) {
     return res.json({
       success: false,
       message: "API Down",
-      error: e.message,
-      credit: "@mynk_mynk_mynk"
+      error: e.message
     });
 
   }
