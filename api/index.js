@@ -20,26 +20,28 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔥 API CALL
+    // 🔥 NEW API CALL
     const r = await fetch(
-      `https://users-xinfo-admin-six.vercel.app/api?key=mayankbhaiooo&type=mobile&term=${term}`
+      `https://num-tg-info-api.vercel.app/info?number=${term}`
     );
 
     const data = await r.json();
 
-    // 🔥 RESULT ARRAY
-    const results = data.result?.data || data.result || [];
+    // 🔥 RESULT ARRAY FIX
+    const results = Array.isArray(data.result)
+      ? data.result
+      : data.data || [data];
 
     // 🔥 KEY MAPPING
     const formatted = results.map((item) => ({
       id: item.id || null,
-      mobile: item.MOBILE || item.mobile || "",
-      name: item.NAME || item.name || "",
-      father_name: item.fname || item.father_name || "",
-      address: item.ADDRESS || item.address || "",
-      alt_mobile: item.alt || item.alt_mobile || "",
+      mobile: item.mobile || item.MOBILE || "",
+      name: item.name || item.NAME || "",
+      father_name: item.father_name || item.fname || "",
+      address: item.address || item.ADDRESS || "",
+      alt_mobile: item.alt_mobile || item.alt || "",
       circle: item.circle || "",
-      id_number: item.id || item.id_number || "",
+      id_number: item.id_number || item.id || "",
       email: item.email || ""
     }));
 
@@ -55,6 +57,7 @@ export default async function handler(req, res) {
     return res.json({
       success: false,
       message: "API Down",
+      error: e.message,
       credit: "@mynk_mynk_mynk"
     });
 
