@@ -20,12 +20,55 @@ export default async function handler(req, res) {
       });
     }
 
-    // 🔥 API CALL
-    const r = await fetch(
+    // 🔥 RETRY FUNCTION
+    async function fetchWithRetry(url, retries = 5) {
+
+      for (let i = 0; i < retries; i++) {
+
+        try {
+
+          const controller = new AbortController();
+
+          const timeout = setTimeout(() => {
+            controller.abort();
+          }, 10000);
+
+          const response = await fetch(url, {
+            signal: controller.signal,
+            headers: {
+              "User-Agent": "Mozilla/5.0"
+            }
+          });
+
+          clearTimeout(timeout);
+
+          const data = await response.json();
+
+          // 🔥 DATA MIL GYA
+          if (data?.results?.length > 0) {
+            return data;
+          }
+
+        } catch (err) {
+          console.log(`Retry ${i + 1} Failed`);
+        }
+
+      }
+
+      return null;
+    }
+
+    // 🔥 API CALL WITH RETRY
+    const data = await fetchWithRetry(
       `https://num-tg-info-api.vercel.app/info?number=${term}`
     );
 
-    const data = await r.json();
+    if (!data) {
+      return res.json({
+        success: false,
+        message: "No Data Found / API Slow"
+      });
+    }
 
     // 🔥 ORIGINAL RESULTS
     const results = data.results || [];
@@ -43,7 +86,7 @@ export default async function handler(req, res) {
       email: item.email || ""
     }));
 
-    // 🔥 FINAL RESPONSE (NO CREDIT)
+    // 🔥 FINAL RESPONSE
     return res.json({
       success: true,
       result: formatted
