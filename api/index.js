@@ -44,7 +44,7 @@ export default async function handler(req, res) {
 
           const data = await response.json();
 
-          // 🔥 DATA MIL GYA
+          // 🔥 DATA FOUND
           if (data?.results?.length > 0) {
             return data;
           }
@@ -58,7 +58,7 @@ export default async function handler(req, res) {
       return null;
     }
 
-    // 🔥 API CALL WITH RETRY
+    // 🔥 NEW BACKEND
     const data = await fetchWithRetry(
       `https://num-tg-info-api.vercel.app/info?number=${term}`
     );
@@ -66,14 +66,14 @@ export default async function handler(req, res) {
     if (!data) {
       return res.json({
         success: false,
-        message: "No Data Found / API Slow"
+        message: "No Data Found / Backend Slow"
       });
     }
 
-    // 🔥 ORIGINAL RESULTS
+    // 🔥 RESULTS
     const results = data.results || [];
 
-    // 🔥 FORMAT FIX
+    // 🔥 FORMAT RESPONSE
     const formatted = results.map((item) => ({
       id: item.id || "",
       mobile: item.mobile || "",
@@ -96,7 +96,7 @@ export default async function handler(req, res) {
 
     return res.json({
       success: false,
-      message: "API Down",
+      message: "Backend Down",
       error: e.message
     });
 
